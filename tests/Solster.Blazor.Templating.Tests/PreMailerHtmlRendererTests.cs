@@ -14,8 +14,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_InlinesCssWhenInlineCssTrue()
     {
         var sp = BuildServiceProvider();
-        var inner = new HtmlRenderer(sp);
-        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, DummyBaseUri);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: true);
 
@@ -28,8 +27,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var inner = new HtmlRenderer(sp);
-        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, DummyBaseUri);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: false);
 
@@ -42,8 +40,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_DoesNotInlineCssByDefault()
     {
         var sp = BuildServiceProvider();
-        var inner = new HtmlRenderer(sp);
-        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, DummyBaseUri);
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
@@ -54,8 +51,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var inner = new HtmlRenderer(sp);
-        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, DummyBaseUri);
 
         var html = await renderer.RenderAsync<SimpleComponent>(inlineCss: false);
 
@@ -63,7 +59,7 @@ public sealed class PreMailerHtmlRendererTests
     }
 
     [Fact]
-    public void AddHtmlRenderer_RegistersPreMailerRenderer()
+    public void AddHtmlRenderer_WithUri_RegistersHtmlRenderer()
     {
         var services = new ServiceCollection();
         services.AddHtmlRenderer(DummyBaseUri);
@@ -71,11 +67,11 @@ public sealed class PreMailerHtmlRendererTests
 
         var renderer = sp.GetRequiredService<IHtmlRenderer>();
 
-        renderer.Should().BeOfType<PreMailerHtmlRenderer>();
+        renderer.Should().BeOfType<HtmlRenderer>();
     }
 
     [Fact]
-    public void AddHtmlRenderer_ReturnsSameInstance_WhenResolvedTwice()
+    public void AddHtmlRenderer_WithUri_ReturnsSameInstance_WhenResolvedTwice()
     {
         var services = new ServiceCollection();
         services.AddHtmlRenderer(DummyBaseUri);

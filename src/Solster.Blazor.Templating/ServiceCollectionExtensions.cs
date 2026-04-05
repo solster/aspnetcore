@@ -19,8 +19,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddHtmlRenderer(this IServiceCollection services, Uri cssBaseUri)
     {
-        services.AddSingleton<IHtmlRenderer>(sp =>
-            new PreMailerHtmlRenderer(new HtmlRenderer(sp), cssBaseUri));
+        services.AddSingleton<IHtmlRenderer>(sp => new HtmlRenderer(sp, cssBaseUri));
         return services;
     }
 }
