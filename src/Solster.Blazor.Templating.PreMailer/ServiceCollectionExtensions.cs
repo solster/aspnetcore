@@ -6,14 +6,17 @@ namespace Solster.Blazor.Templating.PreMailer;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers <see cref="IHtmlRenderer"/> with PreMailer.Net CSS inlining enabled.
+    /// Registers <see cref="IHtmlRenderer"/> with optional PreMailer.Net CSS inlining.
     /// </summary>
-    public static IServiceCollection AddHtmlRendererWithPreMailer(
+    public static IServiceCollection AddHtmlRenderer(
         this IServiceCollection services,
-        Uri cssBaseUri)
+        Uri cssBaseUri,
+        bool inlineCss = true)
     {
         services.AddSingleton<IHtmlRenderer>(sp =>
-            new PreMailerHtmlRenderer(new HtmlRenderer(sp), cssBaseUri));
+            inlineCss
+                ? new PreMailerHtmlRenderer(new HtmlRenderer(sp), cssBaseUri)
+                : new HtmlRenderer(sp));
         return services;
     }
 }

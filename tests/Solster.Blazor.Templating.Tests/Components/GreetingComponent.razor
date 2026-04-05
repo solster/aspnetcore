@@ -1,0 +1,9 @@
+@namespace Solster.Blazor.Templating.Tests.Components
+@implements IHtmlTemplate<GreetingModel>
+
+<p>Hello, @Model.Name!</p>
+
+@code {
+    [Parameter, EditorRequired]
+    public required GreetingModel Model { get; set; }
+}
