@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Solster.Blazor.Templating.Tests.Components;
 
 namespace Solster.Blazor.Templating.Tests;
@@ -14,7 +15,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_InlinesCssWhenInlineCssTrue()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: true);
 
@@ -27,7 +28,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: false);
 
@@ -40,7 +41,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_DoesNotInlineCssByDefault()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
@@ -51,7 +52,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, DummyBaseUri);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
 
         var html = await renderer.RenderAsync<SimpleComponent>(inlineCss: false);
 

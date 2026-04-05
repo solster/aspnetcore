@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Solster.Blazor.Templating;
 
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddHtmlRenderer(this IServiceCollection services)
     {
+        services.AddLogging();
         services.AddSingleton<IHtmlRenderer, HtmlRenderer>();
         return services;
     }
@@ -19,7 +21,9 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddHtmlRenderer(this IServiceCollection services, Uri cssBaseUri)
     {
-        services.AddSingleton<IHtmlRenderer>(sp => new HtmlRenderer(sp, cssBaseUri));
+        services.AddLogging();
+        services.AddSingleton<IHtmlRenderer>(sp =>
+            new HtmlRenderer(sp, sp.GetRequiredService<ILoggerFactory>(), cssBaseUri));
         return services;
     }
 }

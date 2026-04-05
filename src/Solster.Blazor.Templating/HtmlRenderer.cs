@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Renderer = Microsoft.AspNetCore.Components.Web.HtmlRenderer;
 
 namespace Solster.Blazor.Templating;
 
-public sealed class HtmlRenderer(IServiceProvider serviceProvider, Uri? cssBaseUri = null) : IHtmlRenderer
+public sealed class HtmlRenderer(IServiceProvider serviceProvider, ILoggerFactory loggerFactory, Uri? cssBaseUri = null) : IHtmlRenderer
 {
     public async Task<String> RenderAsync<TComponent, TModel>(TModel model, bool inlineCss = false)
         where TComponent : IHtmlTemplate<TModel>
     {
-        await using var renderer = new Renderer(serviceProvider, NullLoggerFactory.Instance);
+        await using var renderer = new Renderer(serviceProvider, loggerFactory);
 
         var parameters = ParameterView.FromDictionary(new Dictionary<String, Object?>
         {
@@ -28,7 +28,7 @@ public sealed class HtmlRenderer(IServiceProvider serviceProvider, Uri? cssBaseU
     public async Task<String> RenderAsync<TComponent>(bool inlineCss = false)
         where TComponent : IComponent
     {
-        await using var renderer = new Renderer(serviceProvider, NullLoggerFactory.Instance);
+        await using var renderer = new Renderer(serviceProvider, loggerFactory);
 
         var html = await renderer.Dispatcher.InvokeAsync(async () =>
         {

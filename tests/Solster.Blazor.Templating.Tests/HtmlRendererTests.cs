@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Solster.Blazor.Templating.Tests.Components;
 
 namespace Solster.Blazor.Templating.Tests;
@@ -12,7 +13,7 @@ public sealed class HtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_ReturnsExpectedHtml()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
@@ -23,7 +24,7 @@ public sealed class HtmlRendererTests
     public async Task RenderAsync_TypedComponent_RendersModelData()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<GreetingComponent, GreetingModel>(new GreetingModel("Alice"));
 
@@ -34,7 +35,7 @@ public sealed class HtmlRendererTests
     public async Task RenderAsync_TypedComponent_DoesNotContainOtherName()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp);
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<GreetingComponent, GreetingModel>(new GreetingModel("Bob"));
 
