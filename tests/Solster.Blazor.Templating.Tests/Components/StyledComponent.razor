@@ -1,0 +1,10 @@
+@namespace Solster.Blazor.Templating.Tests.Components
+@implements IHtmlTemplate<CssModel>
+
+<style>h1 { color: red; }</style>
+<h1>@Model.Title</h1>
+
+@code {
+    [Parameter, EditorRequired]
+    public required CssModel Model { get; set; }
+}
