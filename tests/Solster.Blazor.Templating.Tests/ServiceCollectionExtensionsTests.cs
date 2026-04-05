@@ -13,7 +13,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         var renderer = sp.GetRequiredService<IHtmlRenderer>();
 
-        Assert.IsType<HtmlRenderer>(renderer);
+        renderer.Should().BeOfType<HtmlRenderer>();
     }
 
     [Fact]
@@ -26,6 +26,6 @@ public sealed class ServiceCollectionExtensionsTests
         var renderer1 = sp.GetRequiredService<IHtmlRenderer>();
         var renderer2 = sp.GetRequiredService<IHtmlRenderer>();
 
-        Assert.Same(renderer1, renderer2);
+        renderer1.Should().BeSameAs(renderer2);
     }
 }

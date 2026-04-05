@@ -12,7 +12,7 @@ public sealed class PreMailerHtmlRendererTests
         new ServiceCollection().BuildServiceProvider();
 
     [Fact]
-    public async Task RenderAsync_TypedComponent_InlinesCss()
+    public async Task RenderAsync_TypedComponent_InlinesCssByDefault()
     {
         var sp = BuildServiceProvider();
         var inner = new HtmlRenderer(sp);
@@ -20,13 +20,27 @@ public sealed class PreMailerHtmlRendererTests
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"));
 
-        Assert.Contains("My Title", html);
-        // After inlining, styles are applied as inline attributes on elements
-        Assert.Contains("style=", html);
+        html.Should().Contain("My Title");
+        // CSS inlining is on by default — styles are applied as inline attributes
+        html.Should().Contain("style=");
     }
 
     [Fact]
-    public async Task RenderAsync_ParameterlessComponent_ReturnsExpectedHtml()
+    public async Task RenderAsync_TypedComponent_SkipsCssWhenInlineCssFalse()
+    {
+        var sp = BuildServiceProvider();
+        var inner = new HtmlRenderer(sp);
+        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
+
+        var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: false);
+
+        html.Should().Contain("My Title");
+        // CSS not inlined, so no inline style attribute on elements
+        html.Should().NotContain("<h1 style=");
+    }
+
+    [Fact]
+    public async Task RenderAsync_ParameterlessComponent_InlinesCssByDefault()
     {
         var sp = BuildServiceProvider();
         var inner = new HtmlRenderer(sp);
@@ -34,35 +48,23 @@ public sealed class PreMailerHtmlRendererTests
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
-        Assert.Contains("Hello, world!", html);
+        html.Should().Contain("Hello, world!");
     }
 
     [Fact]
-    public void AddHtmlRenderer_WithInlineCssTrue_RegistersPreMailerRenderer()
+    public async Task RenderAsync_ParameterlessComponent_SkipsCssWhenInlineCssFalse()
     {
-        var services = new ServiceCollection();
-        services.AddHtmlRenderer(DummyBaseUri, inlineCss: true);
-        var sp = services.BuildServiceProvider();
+        var sp = BuildServiceProvider();
+        var inner = new HtmlRenderer(sp);
+        var renderer = new PreMailerHtmlRenderer(inner, DummyBaseUri);
 
-        var renderer = sp.GetRequiredService<IHtmlRenderer>();
+        var html = await renderer.RenderAsync<SimpleComponent>(inlineCss: false);
 
-        Assert.IsType<PreMailerHtmlRenderer>(renderer);
+        html.Should().Contain("Hello, world!");
     }
 
     [Fact]
-    public void AddHtmlRenderer_WithInlineCssFalse_RegistersPlainRenderer()
-    {
-        var services = new ServiceCollection();
-        services.AddHtmlRenderer(DummyBaseUri, inlineCss: false);
-        var sp = services.BuildServiceProvider();
-
-        var renderer = sp.GetRequiredService<IHtmlRenderer>();
-
-        Assert.IsType<HtmlRenderer>(renderer);
-    }
-
-    [Fact]
-    public void AddHtmlRenderer_DefaultInlineCss_RegistersPreMailerRenderer()
+    public void AddHtmlRenderer_RegistersPreMailerRenderer()
     {
         var services = new ServiceCollection();
         services.AddHtmlRenderer(DummyBaseUri);
@@ -70,6 +72,19 @@ public sealed class PreMailerHtmlRendererTests
 
         var renderer = sp.GetRequiredService<IHtmlRenderer>();
 
-        Assert.IsType<PreMailerHtmlRenderer>(renderer);
+        renderer.Should().BeOfType<PreMailerHtmlRenderer>();
+    }
+
+    [Fact]
+    public void AddHtmlRenderer_ReturnsSameInstance_WhenResolvedTwice()
+    {
+        var services = new ServiceCollection();
+        services.AddHtmlRenderer(DummyBaseUri);
+        var sp = services.BuildServiceProvider();
+
+        var renderer1 = sp.GetRequiredService<IHtmlRenderer>();
+        var renderer2 = sp.GetRequiredService<IHtmlRenderer>();
+
+        renderer1.Should().BeSameAs(renderer2);
     }
 }

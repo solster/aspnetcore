@@ -6,7 +6,7 @@ namespace Solster.Blazor.Templating;
 
 public sealed class HtmlRenderer(IServiceProvider serviceProvider) : IHtmlRenderer
 {
-    public async Task<String> RenderAsync<TComponent, TModel>(TModel model)
+    public async Task<String> RenderAsync<TComponent, TModel>(TModel model, bool inlineCss = true)
         where TComponent : IHtmlTemplate<TModel>
     {
         await using var renderer = new Renderer(serviceProvider, NullLoggerFactory.Instance);
@@ -23,7 +23,7 @@ public sealed class HtmlRenderer(IServiceProvider serviceProvider) : IHtmlRender
         });
     }
 
-    public async Task<String> RenderAsync<TComponent>()
+    public async Task<String> RenderAsync<TComponent>(bool inlineCss = true)
         where TComponent : IComponent
     {
         await using var renderer = new Renderer(serviceProvider, NullLoggerFactory.Instance);

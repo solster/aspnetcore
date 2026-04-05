@@ -16,7 +16,7 @@ public sealed class HtmlRendererTests
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
-        Assert.Contains("Hello, world!", html);
+        html.Should().Contain("Hello, world!");
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class HtmlRendererTests
 
         var html = await renderer.RenderAsync<GreetingComponent, GreetingModel>(new GreetingModel("Alice"));
 
-        Assert.Contains("Alice", html);
+        html.Should().Contain("Alice");
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class HtmlRendererTests
 
         var html = await renderer.RenderAsync<GreetingComponent, GreetingModel>(new GreetingModel("Bob"));
 
-        Assert.DoesNotContain("Alice", html);
-        Assert.Contains("Bob", html);
+        html.Should().NotContain("Alice");
+        html.Should().Contain("Bob");
     }
 }

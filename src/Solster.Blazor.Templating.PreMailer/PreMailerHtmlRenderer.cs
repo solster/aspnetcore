@@ -8,18 +8,18 @@ namespace Solster.Blazor.Templating.PreMailer;
 /// </summary>
 public sealed class PreMailerHtmlRenderer(IHtmlRenderer inner, Uri cssBaseUri) : IHtmlRenderer
 {
-    public async Task<String> RenderAsync<TComponent, TModel>(TModel model)
+    public async Task<String> RenderAsync<TComponent, TModel>(TModel model, bool inlineCss = true)
         where TComponent : IHtmlTemplate<TModel>
     {
-        var html = await inner.RenderAsync<TComponent, TModel>(model);
-        return InlineCss(html);
+        var html = await inner.RenderAsync<TComponent, TModel>(model, inlineCss: false);
+        return inlineCss ? InlineCss(html) : html;
     }
 
-    public async Task<String> RenderAsync<TComponent>()
+    public async Task<String> RenderAsync<TComponent>(bool inlineCss = true)
         where TComponent : IComponent
     {
-        var html = await inner.RenderAsync<TComponent>();
-        return InlineCss(html);
+        var html = await inner.RenderAsync<TComponent>(inlineCss: false);
+        return inlineCss ? InlineCss(html) : html;
     }
 
     private String InlineCss(String html)
