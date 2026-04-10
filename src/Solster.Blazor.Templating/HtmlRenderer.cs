@@ -6,7 +6,7 @@ namespace Solster.Blazor.Templating;
 
 public sealed class HtmlRenderer(IServiceProvider serviceProvider, ILoggerFactory loggerFactory, Uri? cssBaseUri = null) : IHtmlRenderer
 {
-    public async Task<String> RenderAsync<TComponent, TModel>(TModel model, bool inlineCss = false)
+    public async Task<String> RenderAsync<TComponent, TModel>(TModel model, Boolean inlineCss = false)
         where TComponent : IHtmlTemplate<TModel>
     {
         await using var renderer = new Renderer(serviceProvider, loggerFactory);
@@ -25,7 +25,7 @@ public sealed class HtmlRenderer(IServiceProvider serviceProvider, ILoggerFactor
         return inlineCss && cssBaseUri is not null ? InlineCss(html) : html;
     }
 
-    public async Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, bool inlineCss = false)
+    public async Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, Boolean inlineCss = false)
         where TComponent : IComponent
     {
         await using var renderer = new Renderer(serviceProvider, loggerFactory);
@@ -41,7 +41,7 @@ public sealed class HtmlRenderer(IServiceProvider serviceProvider, ILoggerFactor
         return inlineCss && cssBaseUri is not null ? InlineCss(html) : html;
     }
 
-    public async Task<String> RenderAsync<TComponent>(bool inlineCss = false)
+    public async Task<String> RenderAsync<TComponent>(Boolean inlineCss = false)
         where TComponent : IComponent
     {
         await using var renderer = new Renderer(serviceProvider, loggerFactory);

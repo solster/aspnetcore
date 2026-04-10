@@ -10,11 +10,12 @@ public interface IHtmlRenderer
     /// <summary>
     /// Renders <typeparamref name="TComponent"/> with the given <paramref name="model"/> to an HTML string.
     /// </summary>
+    /// <param name="model"></param>
     /// <param name="inlineCss">
     /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
     /// Defaults to <see langword="false"/>.
     /// </param>
-    Task<String> RenderAsync<TComponent, TModel>(TModel model, bool inlineCss = false)
+    Task<String> RenderAsync<TComponent, TModel>(TModel model, Boolean inlineCss = false)
         where TComponent : IHtmlTemplate<TModel>;
 
     /// <summary>
@@ -27,7 +28,7 @@ public interface IHtmlRenderer
     /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
     /// Defaults to <see langword="false"/>.
     /// </param>
-    Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, bool inlineCss = false)
+    Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, Boolean inlineCss = false)
         where TComponent : IComponent;
 
     /// <summary>
@@ -37,6 +38,6 @@ public interface IHtmlRenderer
     /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
     /// Defaults to <see langword="false"/>.
     /// </param>
-    Task<String> RenderAsync<TComponent>(bool inlineCss = false)
+    Task<String> RenderAsync<TComponent>(Boolean inlineCss = false)
         where TComponent : IComponent;
 }
