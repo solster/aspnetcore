@@ -6,53 +6,85 @@ namespace Solster.Blazor.Templating;
 
 public sealed class HtmlRenderer(IServiceProvider serviceProvider, ILoggerFactory loggerFactory, Uri? cssBaseUri = null) : IHtmlRenderer
 {
-    public async Task<String> RenderAsync<TComponent, TModel>(TModel model, Boolean inlineCss = false)
+    public Task<String> RenderAsync<TComponent, TModel>(TModel model, Boolean inlineCss = false)
         where TComponent : IHtmlTemplate<TModel>
+        => RenderAsync(typeof(TComponent), model, inlineCss);
+
+    public Task<String> RenderAsync<TModel>(Type componentType, TModel model, Boolean inlineCss = false)
+    {
+        ValidateTemplateComponentType<TModel>(componentType);
+
+        var parameters = new Dictionary<String, Object?>
+        {
+            [nameof(IHtmlTemplate<>.Model)] = model
+        };
+
+        return RenderComponentAsync(componentType, ParameterView.FromDictionary(parameters), inlineCss);
+    }
+
+    public Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, Boolean inlineCss = false)
+        where TComponent : IComponent
+        => RenderAsync(typeof(TComponent), parameters, inlineCss);
+
+    public Task<String> RenderAsync(Type componentType, Dictionary<String, Object?> parameters, Boolean inlineCss = false)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        ValidateComponentType(componentType);
+
+        return RenderComponentAsync(componentType, ParameterView.FromDictionary(parameters), inlineCss);
+    }
+
+    public Task<String> RenderAsync<TComponent>(Boolean inlineCss = false)
+        where TComponent : IComponent
+        => RenderAsync(typeof(TComponent), inlineCss);
+
+    public Task<String> RenderAsync(Type componentType, Boolean inlineCss = false)
+    {
+        ValidateComponentType(componentType);
+
+        return RenderComponentAsync(componentType, ParameterView.Empty, inlineCss);
+    }
+
+    private async Task<String> RenderComponentAsync(Type componentType, ParameterView parameters, Boolean inlineCss)
     {
         await using var renderer = new Renderer(serviceProvider, loggerFactory);
 
-        var parameters = ParameterView.FromDictionary(new Dictionary<String, Object?>
-        {
-            [nameof(IHtmlTemplate<TModel>.Model)] = model
-        });
-
         var html = await renderer.Dispatcher.InvokeAsync(async () =>
         {
-            var output = await renderer.RenderComponentAsync<TComponent>(parameters);
+            var output = await renderer.RenderComponentAsync(componentType, parameters);
             return output.ToHtmlString();
         });
 
         return inlineCss && cssBaseUri is not null ? InlineCss(html) : html;
     }
 
-    public async Task<String> RenderAsync<TComponent>(Dictionary<String, Object?> parameters, Boolean inlineCss = false)
-        where TComponent : IComponent
+    private static void ValidateComponentType(Type componentType)
     {
-        await using var renderer = new Renderer(serviceProvider, loggerFactory);
+        ArgumentNullException.ThrowIfNull(componentType);
 
-        var parameterView = ParameterView.FromDictionary(parameters);
-
-        var html = await renderer.Dispatcher.InvokeAsync(async () =>
+        if (!typeof(IComponent).IsAssignableFrom(componentType))
         {
-            var output = await renderer.RenderComponentAsync<TComponent>(parameterView);
-            return output.ToHtmlString();
-        });
-
-        return inlineCss && cssBaseUri is not null ? InlineCss(html) : html;
+            throw new ArgumentException($"The component type '{componentType}' must implement {nameof(IComponent)}.", nameof(componentType));
+        }
     }
 
-    public async Task<String> RenderAsync<TComponent>(Boolean inlineCss = false)
-        where TComponent : IComponent
+    private static void ValidateTemplateComponentType<TModel>(Type componentType)
     {
-        await using var renderer = new Renderer(serviceProvider, loggerFactory);
+        ValidateComponentType(componentType);
 
-        var html = await renderer.Dispatcher.InvokeAsync(async () =>
+        var templateInterface = componentType
+            .GetInterfaces()
+            .FirstOrDefault(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition() == typeof(IHtmlTemplate<>) &&
+                i.GenericTypeArguments[0] == typeof(TModel));
+
+        if (templateInterface is null)
         {
-            var output = await renderer.RenderComponentAsync<TComponent>(ParameterView.Empty);
-            return output.ToHtmlString();
-        });
-
-        return inlineCss && cssBaseUri is not null ? InlineCss(html) : html;
+            throw new ArgumentException(
+                $"The component type '{componentType}' must implement {typeof(IHtmlTemplate<TModel>)}.",
+                nameof(componentType));
+        }
     }
 
     private String InlineCss(String html)

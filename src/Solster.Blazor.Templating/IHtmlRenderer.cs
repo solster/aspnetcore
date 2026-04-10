@@ -19,6 +19,19 @@ public interface IHtmlRenderer
         where TComponent : IHtmlTemplate<TModel>;
 
     /// <summary>
+    /// Renders the component identified by <paramref name="componentType"/> with the given <paramref name="model"/> to an HTML string.
+    /// </summary>
+    /// <param name="componentType">
+    /// The runtime component type to render. Must implement <see cref="IHtmlTemplate{TModel}"/> for <typeparamref name="TModel"/>.
+    /// </param>
+    /// <param name="model"></param>
+    /// <param name="inlineCss">
+    /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
+    /// Defaults to <see langword="false"/>.
+    /// </param>
+    Task<String> RenderAsync<TModel>(Type componentType, TModel model, Boolean inlineCss = false);
+
+    /// <summary>
     /// Renders <typeparamref name="TComponent"/> with the given <paramref name="parameters"/> dictionary to an HTML string.
     /// </summary>
     /// <param name="parameters">
@@ -32,6 +45,21 @@ public interface IHtmlRenderer
         where TComponent : IComponent;
 
     /// <summary>
+    /// Renders the component identified by <paramref name="componentType"/> with the given <paramref name="parameters"/> dictionary to an HTML string.
+    /// </summary>
+    /// <param name="componentType">
+    /// The runtime component type to render. Must implement <see cref="IComponent"/>.
+    /// </param>
+    /// <param name="parameters">
+    /// A dictionary of component parameter names and their values, passed directly to the component.
+    /// </param>
+    /// <param name="inlineCss">
+    /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
+    /// Defaults to <see langword="false"/>.
+    /// </param>
+    Task<String> RenderAsync(Type componentType, Dictionary<String, Object?> parameters, Boolean inlineCss = false);
+
+    /// <summary>
     /// Renders <typeparamref name="TComponent"/> with no model (for parameter-less templates).
     /// </summary>
     /// <param name="inlineCss">
@@ -40,4 +68,16 @@ public interface IHtmlRenderer
     /// </param>
     Task<String> RenderAsync<TComponent>(Boolean inlineCss = false)
         where TComponent : IComponent;
+
+    /// <summary>
+    /// Renders the component identified by <paramref name="componentType"/> with no parameters.
+    /// </summary>
+    /// <param name="componentType">
+    /// The runtime component type to render. Must implement <see cref="IComponent"/>.
+    /// </param>
+    /// <param name="inlineCss">
+    /// When <see langword="true"/>, CSS is inlined into the HTML if the renderer supports it.
+    /// Defaults to <see langword="false"/>.
+    /// </param>
+    Task<String> RenderAsync(Type componentType, Boolean inlineCss = false);
 }

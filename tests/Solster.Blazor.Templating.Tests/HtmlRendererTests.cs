@@ -9,6 +9,8 @@ public sealed class HtmlRendererTests
     private static IServiceProvider BuildServiceProvider() =>
         new ServiceCollection().BuildServiceProvider();
 
+    private sealed class NotAComponent;
+
     [Fact]
     public async Task RenderAsync_ParameterlessComponent_ReturnsExpectedHtml()
     {
@@ -32,6 +34,17 @@ public sealed class HtmlRendererTests
     }
 
     [Fact]
+    public async Task RenderAsync_ComponentTypeAndModel_RendersModelData()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var html = await renderer.RenderAsync(typeof(GreetingComponent), new GreetingModel("Diana"));
+
+        html.Should().Contain("Diana");
+    }
+
+    [Fact]
     public async Task RenderAsync_DictionaryParameters_RendersModelData()
     {
         var sp = BuildServiceProvider();
@@ -44,6 +57,29 @@ public sealed class HtmlRendererTests
     }
 
     [Fact]
+    public async Task RenderAsync_ComponentTypeAndDictionaryParameters_RendersModelData()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var parameters = new Dictionary<String, Object?> { ["Model"] = new GreetingModel("Eve") };
+        var html = await renderer.RenderAsync(typeof(GreetingComponent), parameters);
+
+        html.Should().Contain("Eve");
+    }
+
+    [Fact]
+    public async Task RenderAsync_ComponentTypeParameterlessComponent_ReturnsExpectedHtml()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var html = await renderer.RenderAsync(typeof(SimpleComponent));
+
+        html.Should().Contain("Hello, world!");
+    }
+
+    [Fact]
     public async Task RenderAsync_TypedComponent_DoesNotContainOtherName()
     {
         var sp = BuildServiceProvider();
@@ -53,5 +89,53 @@ public sealed class HtmlRendererTests
 
         html.Should().NotContain("Alice");
         html.Should().Contain("Bob");
+    }
+
+    [Fact]
+    public async Task RenderAsync_ModelOverload_WithNonComponentType_ThrowsArgumentException()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var act = () => renderer.RenderAsync(typeof(NotAComponent), new GreetingModel("Alice"));
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("componentType");
+    }
+
+    [Fact]
+    public async Task RenderAsync_ModelOverload_WithMismatchedTemplateType_ThrowsArgumentException()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var act = () => renderer.RenderAsync(typeof(GreetingComponent), new CssModel("Wrong model"));
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("componentType");
+    }
+
+    [Fact]
+    public async Task RenderAsync_DictionaryOverload_WithNonComponentType_ThrowsArgumentException()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var act = () => renderer.RenderAsync(typeof(NotAComponent), new Dictionary<String, Object?>());
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("componentType");
+    }
+
+    [Fact]
+    public async Task RenderAsync_ParameterlessOverload_WithNonComponentType_ThrowsArgumentException()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
+
+        var act = () => renderer.RenderAsync(typeof(NotAComponent));
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("componentType");
     }
 }

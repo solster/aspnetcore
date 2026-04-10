@@ -25,6 +25,18 @@ public sealed class PreMailerHtmlRendererTests
     }
 
     [Fact]
+    public async Task RenderAsync_ComponentTypeAndModel_InlinesCssWhenInlineCssTrue()
+    {
+        var sp = BuildServiceProvider();
+        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+
+        var html = await renderer.RenderAsync(typeof(StyledComponent), new CssModel("Typed Title"), inlineCss: true);
+
+        html.Should().Contain("Typed Title");
+        html.Should().Contain("style=");
+    }
+
+    [Fact]
     public async Task RenderAsync_TypedComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
