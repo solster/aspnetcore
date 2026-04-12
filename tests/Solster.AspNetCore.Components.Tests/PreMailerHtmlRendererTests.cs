@@ -1,13 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Solster.Blazor.Templating.Tests.Components;
+using Solster.AspNetCore.Components.Tests.Components;
+using Microsoft.AspNetCore.Components.Web;
 
-namespace Solster.Blazor.Templating.Tests;
+namespace Solster.AspNetCore.Components.Tests;
 
 public sealed class PreMailerHtmlRendererTests
 {
-    private static readonly Uri DummyBaseUri = new("https://example.com/");
-
     private static IServiceProvider BuildServiceProvider() =>
         new ServiceCollection().BuildServiceProvider();
 
@@ -15,7 +14,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_InlinesCssWhenInlineCssTrue()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: true);
 
@@ -28,7 +27,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ComponentTypeAndModel_InlinesCssWhenInlineCssTrue()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync(typeof(StyledComponent), new CssModel("Typed Title"), inlineCss: true);
 
@@ -40,7 +39,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_TypedComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<StyledComponent, CssModel>(new CssModel("My Title"), inlineCss: false);
 
@@ -53,7 +52,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_DoesNotInlineCssByDefault()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<SimpleComponent>();
 
@@ -64,7 +63,7 @@ public sealed class PreMailerHtmlRendererTests
     public async Task RenderAsync_ParameterlessComponent_SkipsCssWhenInlineCssFalse()
     {
         var sp = BuildServiceProvider();
-        var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance, DummyBaseUri);
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
         var html = await renderer.RenderAsync<SimpleComponent>(inlineCss: false);
 
@@ -72,27 +71,15 @@ public sealed class PreMailerHtmlRendererTests
     }
 
     [Fact]
-    public void AddHtmlRenderer_WithUri_RegistersHtmlRenderer()
+    public async Task RenderAsync_DictionaryOverload_WithNullParameters_ThrowsArgumentNullException()
     {
-        var services = new ServiceCollection();
-        services.AddHtmlRenderer(DummyBaseUri);
-        var sp = services.BuildServiceProvider();
+        var sp = BuildServiceProvider();
+        await using var renderer = new HtmlRenderer(sp, NullLoggerFactory.Instance);
 
-        var renderer = sp.GetRequiredService<IHtmlRenderer>();
+        Dictionary<String, Object?>? parameters = null;
+        var act = () => renderer.RenderAsync<StyledComponent>(parameters!, inlineCss: true);
 
-        renderer.Should().BeOfType<HtmlRenderer>();
-    }
-
-    [Fact]
-    public void AddHtmlRenderer_WithUri_ReturnsSameInstance_WhenResolvedTwice()
-    {
-        var services = new ServiceCollection();
-        services.AddHtmlRenderer(DummyBaseUri);
-        var sp = services.BuildServiceProvider();
-
-        var renderer1 = sp.GetRequiredService<IHtmlRenderer>();
-        var renderer2 = sp.GetRequiredService<IHtmlRenderer>();
-
-        renderer1.Should().BeSameAs(renderer2);
+        await act.Should().ThrowAsync<ArgumentNullException>()
+            .WithParameterName("parameters");
     }
 }

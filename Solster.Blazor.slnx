@@ -1,8 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/Solster.Blazor.Templating/Solster.Blazor.Templating.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/Solster.Blazor.Templating.Tests/Solster.Blazor.Templating.Tests.csproj" />
-  </Folder>
-</Solution>

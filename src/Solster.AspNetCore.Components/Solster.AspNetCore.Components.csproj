@@ -4,7 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageId>Solster.Blazor.Templating</PackageId>
+    <AssemblyName>Solster.AspNetCore.Components</AssemblyName>
+    <RootNamespace>Solster.AspNetCore.Components</RootNamespace>
+    <PackageId>Solster.AspNetCore.Components</PackageId>
     <Authors>Solster</Authors>
     <Description>Blazor-component-based HTML renderer with optional PreMailer.Net CSS inlining, for use in email templating.</Description>
     <RepositoryUrl>https://github.com/solster/blazor</RepositoryUrl>

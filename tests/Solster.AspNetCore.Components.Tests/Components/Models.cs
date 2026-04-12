@@ -1,4 +1,4 @@
-namespace Solster.Blazor.Templating.Tests.Components;
+namespace Solster.AspNetCore.Components.Tests.Components;
 
 public sealed record GreetingModel(String Name);
 
