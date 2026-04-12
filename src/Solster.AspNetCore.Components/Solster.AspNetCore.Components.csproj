@@ -9,7 +9,7 @@
     <PackageId>Solster.AspNetCore.Components</PackageId>
     <Authors>Solster</Authors>
     <Description>Blazor-component-based HTML renderer with optional PreMailer.Net CSS inlining, for use in email templating.</Description>
-    <RepositoryUrl>https://github.com/solster/blazor</RepositoryUrl>
+    <RepositoryUrl>https://github.com/solster/aspnetcore</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
