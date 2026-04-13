@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>true</IsPackable>
     <AssemblyName>Solster.AspNetCore.Components.Templating</AssemblyName>
     <RootNamespace>Solster.AspNetCore.Components.Templating</RootNamespace>
     <PackageId>Solster.AspNetCore.Components.Templating</PackageId>

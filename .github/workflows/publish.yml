@@ -66,11 +66,34 @@ jobs:
 
       - name: Pack
         run: |
-          dotnet pack src/Solster.AspNetCore.Components/Solster.AspNetCore.Components.csproj \
-            --no-restore \
-            --configuration Release \
-            --output ./artifacts \
-            -p:Version=${{ steps.version.outputs.version }}
+          mapfile -t projects < <(find ./src -name '*.csproj' | sort)
+          packable_projects=()
+
+          if [ ${#projects[@]} -eq 0 ]; then
+            echo "No projects found under ./src"
+            exit 1
+          fi
+
+          for project in "${projects[@]}"; do
+            is_packable=$(dotnet msbuild "${project}" -nologo -getProperty:IsPackable | tr -d '\r')
+            if [ "${is_packable}" = "true" ]; then
+              packable_projects+=("${project}")
+            fi
+          done
+
+          if [ ${#packable_projects[@]} -eq 0 ]; then
+            echo "No packable projects found (IsPackable=true)."
+            exit 1
+          fi
+
+          for project in "${packable_projects[@]}"; do
+            echo "Packing ${project}"
+            dotnet pack "${project}" \
+              --no-restore \
+              --configuration Release \
+              --output ./artifacts \
+              -p:Version=${{ steps.version.outputs.version }}
+          done
 
       - name: Publish to GitHub Packages
         run: |
