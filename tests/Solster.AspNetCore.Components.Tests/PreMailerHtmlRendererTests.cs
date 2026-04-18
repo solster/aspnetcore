@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Solster.AspNetCore.Components.Tests.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Solster.AspNetCore.Components.Tests;
 

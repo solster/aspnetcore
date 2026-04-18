@@ -63,4 +63,3 @@ internal sealed class TypeMapResolver : ITypeMapResolver
         => type.GetCustomAttribute<JsonTypeKeyAttribute>()?.Key ?? type.Name;
 }
 
-

@@ -54,3 +54,5 @@ TestResult.xml
 nunit-*.xml
 *.DotSettings.user
 /.idea/
+src/ActivityLog/tests/IntegrationTests/Features/*.feature.cs
+.DS_Store

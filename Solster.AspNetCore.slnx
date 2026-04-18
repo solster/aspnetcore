@@ -1,10 +1,14 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Solster.AspNetCore.Components/Solster.AspNetCore.Components.csproj" />
+    <Project Path="src/ActivityLog.EntityFrameworkCore/src/Solster.AspNetCore.ActivityLog.EntityFrameworkCore.csproj" />
+    <Project Path="src/ActivityLog/src/Solster.AspNetCore.ActivityLog.csproj" />
     <Project Path="src/Solster.AspNetCore.Components.Templating/Solster.AspNetCore.Components.Templating.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Solster.AspNetCore.Components.Tests/Solster.AspNetCore.Components.Tests.csproj" />
+    <Project Path="src/ActivityLog/tests/IntegrationTests/Solster.AspNetCore.ActivityLog.IntegrationTests.csproj" />
+    <Project Path="src/ActivityLog/tests/UnitTests/Solster.AspNetCore.ActivityLog.UnitTests.csproj" />
     <Project Path="tests/Solster.AspNetCore.Components.Templating.Tests/Solster.AspNetCore.Components.Templating.Tests.csproj" />
   </Folder>
 </Solution>

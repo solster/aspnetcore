@@ -14,7 +14,7 @@ public static class HtmlRendererCssExtensions
             var html = await renderer.RenderAsync(componentType, model);
             return inlineCss ? InlineCss(html) : html;
         }
-        
+
         /// <summary>
         /// Renders the component identified by <paramref name="componentType"/> with the given <paramref name="parameters"/> dictionary to an HTML string and optionally inlines CSS.
         /// </summary>
@@ -38,9 +38,8 @@ public static class HtmlRendererCssExtensions
     {
         var result = new PreMailer.Net.PreMailer(html)
             .MoveCssInline(removeComments: true);
-        
+
         return result.Html;
     }
 }
-
 

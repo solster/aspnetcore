@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <IsPackable>true</IsPackable>
+    <PackageId>Solster.AspNetCore.ActivityLog</PackageId>
+    <Version Condition="'$(BuildTimestamp)' != ''">0.1.0-preview.$(BuildTimestamp)</Version>
+    <Version Condition="'$(BuildTimestamp)' == ''">0.1.0-preview</Version>
+    <Authors>Solster</Authors>
+    <Description>Store-agnostic activity logging for ASP.NET Core. Intercepts structured log events by EventId range, writes typed ActivityLogEntry records via IActivityStore to a background Channel processor. Pair with Solster.AspNetCore.ActivityLog.EntityFrameworkCore (or your own IActivityStore) for persistence.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>
+

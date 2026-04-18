@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <IsPackable>true</IsPackable>
+    <PackageId>Solster.AspNetCore.ActivityLog.EntityFrameworkCore</PackageId>
+    <Version Condition="'$(BuildTimestamp)' != ''">0.1.0-preview.$(BuildTimestamp)</Version>
+    <Version Condition="'$(BuildTimestamp)' == ''">0.1.0-preview</Version>
+    <Authors>Solster</Authors>
+    <Description>Entity Framework Core + Npgsql store implementation for Solster.AspNetCore.ActivityLog. Registers ActivityDbContext and EfCoreActivityStore via AddEfCoreActivityStore(Action&lt;DbContextOptionsBuilder&gt;).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ActivityLog\src\Solster.AspNetCore.ActivityLog.csproj" />
+  </ItemGroup>
+
+</Project>
+
